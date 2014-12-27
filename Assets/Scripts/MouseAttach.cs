@@ -2,16 +2,22 @@
 using System.Collections;
 
 public class MouseAttach : MonoBehaviour {
-	
-	public GameObject Pointer;
-	public GameObject ShootingLine;
+
+	private GameObject SnowballPointer;
+	private GameObject PresentPointer;
+	private GameObject BombPointer;
+	private GameObject Pointer;
+	private GameObject ShootingLine;
 	public float ShotPower = 50;
 
-	public GameObject Snowballs;
+	public GameObject SnowBallObject;
+	public GameObject PresentObject;
+	public GameObject BombObject;
+	private GameObject ShootingObject;
 
 	private Vector3 PushIn = new Vector3(0.0f,0.0f,1.0f);
 
-	public Transform start;
+	private Transform start;
 	private Vector3 end;
 	private Vector3 endpoint;
 	
@@ -23,52 +29,119 @@ public class MouseAttach : MonoBehaviour {
 
 	private bool loadingshot = false;
 
-	private float strength = 0.2f;
+	private float strength = 0.8f;
 
 	public AudioSource ChargeShotSound;
 	
+
+	void Start(){
+		PresentPointer = GameObject.Find ("PresentPoint");
+		SnowballPointer = GameObject.Find ("SnowBallPoint");
+		ShootingLine = GameObject.Find("ShootingLineParticles");
+	}
+
 	void Update () {
 
+		if (start != null) {
 
-		if (Input.GetMouseButton (0)) {
+			if (Input.GetMouseButton (1) || Input.GetMouseButton (0)) {
 
-			if(!ChargeShotSound.isPlaying){
-				ChargeShotSound.Play();
+
+					if (Input.GetMouseButton (0)) 
+					{		
+							Pointer = SnowballPointer;	
+							ShootingObject = SnowBallObject; 	
+					} else if (Input.GetMouseButton (1)) 
+					{
+							Pointer = PresentPointer;	
+							ShootingObject = PresentObject;		
+					} else 
+					{								
+							Pointer = SnowballPointer;	
+							ShootingObject = BombObject;		
+					}
+	
+					RayCastSettings ();
+	
+					if (strength < 1.0f) {
+							strength += Time.deltaTime;
+					}
+	
+					RayCastSettings ();
+	
+					SetLine ();
 			}
 
-			if(strength<1.0f){
-				strength += Time.deltaTime;
+			if (Input.GetMouseButtonUp (0) || Input.GetMouseButtonUp (1)) {
+					ResetLineAndHide ();
+			}
+		} else {
+			if(GameObject.Find("NetworkManager").GetComponent<NetworkscriptContentManager>().MapSpawned){
+				if(Network.isServer){
+					start = GameObject.Find ("PlayerObject(Clone)").transform;
+					print ("Pointing!");
+				}
+				else{
+					start = GameObject.Find ("PlayerObject2(Clone)").transform;
+					print ("Pointing!");
+				}
+
 			}
 
+		}
 
-			loadingshot = true;
+	}
+
+	void SetLine(){
+		endpoint = camera.ScreenToWorldPoint (Input.mousePosition) + PushIn;
+		SetPos (start.position + PushIn, endpoint + PushIn);
+
+		if(Pointer == PresentPointer && GetComponent<PointManager>().Points < 1){
+
+		}else{
 			Pointer.gameObject.renderer.enabled = true;
-			ShootingLine.gameObject.particleSystem.enableEmission = true;
-			RaycastHit2D hitInfo = Physics2D.Raycast (Camera.main.ScreenToWorldPoint (Input.mousePosition), Vector2.zero);
-			if (Physics2D.Raycast (new Vector2 (camera.ScreenToWorldPoint (Input.mousePosition).x, camera.ScreenToWorldPoint (Input.mousePosition).y), Vector2.zero)) {
-					Debug.DrawLine (transform.position, Camera.main.ScreenToWorldPoint (Input.mousePosition));
-			}
-
-			endpoint = camera.ScreenToWorldPoint (Input.mousePosition) + PushIn;
-			SetPos (start.position + PushIn, endpoint + PushIn);
-
 			Pointer.transform.position = dotPoint + PushIn;
 			Pointer.transform.localScale = new Vector3(strength,strength,strength);
-		} else {
-			Pointer.gameObject.renderer.enabled = false;
-			ShootingLine.gameObject.particleSystem.enableEmission = false;
-			ChargeShotSound.Stop();
+		}
 
-			if(loadingshot == true){
-				loadingshot = false;
-				GameObject newSnowball = Instantiate(Snowballs, Pointer.transform.position, transform.rotation) as GameObject;
+	}
+
+	void RayCastSettings(){
+		loadingshot = true;
+		ShootingLine.gameObject.particleSystem.enableEmission = true;
+		if (Physics2D.Raycast (new Vector2 (camera.ScreenToWorldPoint (Input.mousePosition).x, camera.ScreenToWorldPoint (Input.mousePosition).y), Vector2.zero)) {
+			Debug.DrawLine (transform.position, Camera.main.ScreenToWorldPoint (Input.mousePosition));
+		}
+	}
+
+	void ResetLineAndHide(){
+		Pointer.gameObject.renderer.enabled = false;
+		ShootingLine.gameObject.particleSystem.enableEmission = false;
+
+		if(loadingshot == true){
+			loadingshot = false;
+
+			if(Pointer == PresentPointer){
+				if(GetComponent<PointManager>().Points > 0)
+				{
+					GetComponent<PointManager>().Points --;
+					GameObject newSnowball = Network.Instantiate(ShootingObject, Pointer.transform.position, transform.rotation,0) as GameObject;
+					newSnowball.transform.localScale = new Vector2(strength,strength);
+					newSnowball.rigidbody2D.mass = strength*2;
+					newSnowball.rigidbody2D.AddForce (ShootingLine.transform.up * ShotPower, ForceMode2D.Impulse);
+				}
+
+			} else{
+				GameObject newSnowball = Network.Instantiate(ShootingObject, Pointer.transform.position, transform.rotation,0) as GameObject;
+				newSnowball.renderer.enabled = true;
 				newSnowball.transform.localScale = new Vector2(strength,strength);
 				newSnowball.rigidbody2D.mass = strength*2;
 				newSnowball.rigidbody2D.AddForce (ShootingLine.transform.up * ShotPower, ForceMode2D.Impulse);
 			}
-			strength = 0.2f;
-		}
 
+
+		}
+		strength = 0.8f;
 	}
 	
 	void SetPos(Vector3 start, Vector3 end) {

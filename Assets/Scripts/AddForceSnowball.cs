@@ -11,28 +11,34 @@ public class AddForceSnowball : MonoBehaviour {
 	void Update(){
 		destroyIn = destroyIn + Time.deltaTime;
 		if(destroyIn > 5.0){
-			Destroy(this.gameObject);
+			if(networkView.isMine){
+				Network.Destroy(this.gameObject);
+			}
 		}
 	}
 
 	// Use this for initialization
 	void OnCollisionEnter2D (Collision2D col) {
-		if(col.gameObject.tag == "Player1"){
-			Physics2D.IgnoreCollision(col.collider, collider2D);
+		if (col.gameObject.tag == "Player1" || col.gameObject.tag == "Player2") {
+				if (col.gameObject.networkView.isMine) {
+						Physics2D.IgnoreCollision (col.collider, collider2D);
+				} 
 		}
+
 		if (col.gameObject.tag == "Obstacle") {
-			snowballHit.Play();
-			if(ActivateStuck){
-				rigidbody2D.isKinematic = true;
-			}
+				snowballHit.Play ();
+				if (ActivateStuck) {
+						rigidbody2D.isKinematic = true;
+				}
 		}
 
 	}
 
-	void OnCollisionStay2D (Collision2D col){
-		if(col.gameObject.tag == "Player1"){
-			Physics2D.IgnoreCollision(col.collider, collider2D);
+	void OnCollusionStay2D (Collision2D col){
+		if (col.gameObject.tag == "Player1" || col.gameObject.tag == "Player2") {
+			if (col.gameObject.networkView.isMine) {
+				Physics2D.IgnoreCollision (col.collider, collider2D);
+			} 
 		}
 	}
-
 }
