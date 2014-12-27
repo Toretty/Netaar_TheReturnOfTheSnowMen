@@ -79,11 +79,9 @@ public class MouseAttach : MonoBehaviour {
 			if(GameObject.Find("NetworkManager").GetComponent<NetworkscriptContentManager>().MapSpawned){
 				if(Network.isServer){
 					start = GameObject.Find ("PlayerObject(Clone)").transform;
-					print ("Pointing!");
 				}
 				else{
 					start = GameObject.Find ("PlayerObject2(Clone)").transform;
-					print ("Pointing!");
 				}
 
 			}

@@ -36,5 +36,11 @@ public class AreaDetection : MonoBehaviour {
 		}
 	}
 
+	void OnTriggerExit2D (Collider2D col){
+		if (col.gameObject.tag == "Present") {
+				Presents--;
+		}
+
+	}
 
 }

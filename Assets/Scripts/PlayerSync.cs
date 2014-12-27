@@ -24,8 +24,19 @@ public class PlayerSync : MonoBehaviour {
 	}
 
 	void Update () {
-	
+
 		if(!activateControls){
+			if(networkView.isMine && gameObject.tag == "Player1"){
+				FindCamera = GameObject.Find ("Main Camera(Clone)");
+				FindCamera.camera.orthographicSize = 11;
+				FindCamera.transform.position = newPosition + new Vector3 (14.0f, 4.0f, -10.0f);
+			} else if(networkView.isMine && gameObject.tag == "Player2"){
+				FindCamera = GameObject.Find ("Main Camera_2(Clone)");
+				FindCamera.camera.orthographicSize = 11;	
+				FindCamera.transform.position = newPosition + new Vector3 (14.0f, 4.0f, -10.0f);
+			}
+
+
 			activateControls = GameObject.FindGameObjectWithTag("StartMapManager").GetComponent<StartMap>().EnableMap;
 		}
 
@@ -43,8 +54,10 @@ public class PlayerSync : MonoBehaviour {
 				} else {
 					newPosition.y = transform.position.y;
 				}
+				FindCamera.camera.orthographicSize = 5;
 				FindCamera.transform.position = newPosition + new Vector3 (0.0f, 2.0f, -10.0f);
-				
+
+
 				if (Input.GetKeyDown (KeyCode.Space)) 
 				{
 					if(!landedAfterJump){
