@@ -12,7 +12,7 @@ public class NetworkscriptStartServer : MonoBehaviour {
 		
 		// Initiatlizes dependign on (max amount of players, port)
 		//Network.InitializeServer(4, 25000, !Network.HavePublicAddress());
-		Network.InitializeServer(4, 25000, false);
+		Network.InitializeServer(4, 25000, !Network.HavePublicAddress());
 		MasterServer.RegisterHost(typeName, gameName, GameDescription);
 
 		//print ("Server hosted - IP: "+MasterServer.ipAddress+" - Port: "+MasterServer.port);

@@ -23,7 +23,7 @@ public class MouseAttach : MonoBehaviour {
 	
 	private float factor = 1.0f;
 	private float range = 2.0f;
-	private Vector3 dotPoint = new Vector3(0.0f, 0.0f, 0.0f);
+	private Vector3 dotPoint;
 	
 	private Vector2 directionOutput;
 
@@ -120,17 +120,18 @@ public class MouseAttach : MonoBehaviour {
 			loadingshot = false;
 
 			if(Pointer == PresentPointer){
+				print(Pointer.transform.position);
 				if(GetComponent<PointManager>().Points > 0)
 				{
 					GetComponent<PointManager>().Points --;
-					GameObject newSnowball = Network.Instantiate(ShootingObject, Pointer.transform.position, transform.rotation,0) as GameObject;
+					GameObject newSnowball = Network.Instantiate(this.ShootingObject, this.Pointer.transform.position, transform.rotation,0) as GameObject;
 					newSnowball.transform.localScale = new Vector2(strength,strength);
 					newSnowball.rigidbody2D.mass = strength*2;
 					newSnowball.rigidbody2D.AddForce (ShootingLine.transform.up * ShotPower, ForceMode2D.Impulse);
 				}
 
 			} else{
-				GameObject newSnowball = Network.Instantiate(ShootingObject, Pointer.transform.position, transform.rotation,0) as GameObject;
+				GameObject newSnowball = Network.Instantiate(this.ShootingObject, this.Pointer.transform.position, transform.rotation,0) as GameObject;
 				newSnowball.renderer.enabled = true;
 				newSnowball.transform.localScale = new Vector2(strength,strength);
 				newSnowball.rigidbody2D.mass = strength*2;

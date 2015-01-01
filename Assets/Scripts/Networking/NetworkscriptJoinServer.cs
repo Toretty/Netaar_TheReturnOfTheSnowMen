@@ -32,8 +32,8 @@ public class NetworkscriptJoinServer : MonoBehaviour {
 	/// <param name="hostData">Host data.</param>
 	public void JoinServer(HostData hostData) {
 		//Debug.Log("Joining Server: "+hostData);
-		//Network.Connect(hostData);
-		Network.Connect("192.168.1.195", 25000);
+		Network.Connect(hostData);
+		//Network.Connect("192.168.1.195", 25000);
 	}
 	
 	/// <summary>

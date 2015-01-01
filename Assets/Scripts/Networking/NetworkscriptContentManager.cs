@@ -21,6 +21,8 @@ public class NetworkscriptContentManager : MonoBehaviour {
 	public Vector3 PlayerPosition;
 	public Vector3 PlayerPosition2;
 
+	private Vector3 PushEntireMap = new Vector3 (50.0f, 0.0f, 0.0f);
+
 	/// <summary>
 	/// Whether the map is spawned.
 	/// </summary>
@@ -33,16 +35,16 @@ public class NetworkscriptContentManager : MonoBehaviour {
 
 		if (Network.isServer) {
 			MapSpawned = true;
-			Instantiate (MapPrefab, transform.position, Quaternion.identity);
-			Network.Instantiate (player1, 	PlayerPosition, Quaternion.identity, 0);	
-			Instantiate(CameraPrefab_Player1, PlayerPosition + new Vector3(10.0f,0.0f,-10.0f), Quaternion.identity);
+			Instantiate (MapPrefab, transform.position + PushEntireMap, Quaternion.identity);
+			Network.Instantiate (player1, PlayerPosition + PushEntireMap, Quaternion.identity, 0);	
+			Instantiate(CameraPrefab_Player1, PlayerPosition + PushEntireMap + new Vector3(10.0f,0.0f,-10.0f), Quaternion.identity);
 
 		} 
 		if (Network.isClient) {
 			MapSpawned = true;
-			Instantiate (MapPrefab, transform.position, Quaternion.identity);
-			Network.Instantiate (player2, 	PlayerPosition2, Quaternion.identity,0);
-			Instantiate (CameraPrefab_Player2, PlayerPosition + new Vector3(10.0f,0.0f,-10.0f), Quaternion.identity);
+			Instantiate (MapPrefab, transform.position + PushEntireMap, Quaternion.identity);
+			Network.Instantiate (player2, 	PlayerPosition2 + PushEntireMap, Quaternion.identity,0);
+			Instantiate (CameraPrefab_Player2, PlayerPosition2 + PushEntireMap + new Vector3(10.0f,0.0f,-10.0f) , Quaternion.identity);
 		}
 	}
 

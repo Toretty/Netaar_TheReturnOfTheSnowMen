@@ -70,4 +70,9 @@ public class SnowBallSync : MonoBehaviour {
 		transform.position = Vector3.Lerp (StartPosition, EndPosition, syncTime / syncDelay);
 		
 	}
+
+	[RPC]
+	private void NetworkInstatiation(){
+
+	}
 }

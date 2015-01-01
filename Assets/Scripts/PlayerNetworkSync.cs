@@ -35,8 +35,8 @@ public class PlayerNetworkSync : MonoBehaviour {
 			
 			// Receive the message from the sender. 
 			stream.Serialize (ref syncPosition);
-			stream.Serialize(ref syncVelocity);
-			stream.Serialize(ref syncFacing);
+			stream.Serialize (ref syncVelocity);
+			stream.Serialize (ref syncFacing);
 
 			syncTime = 0.0f;
 			syncDelay = Time.time - LastSyncTime;
@@ -49,7 +49,7 @@ public class PlayerNetworkSync : MonoBehaviour {
 			}
 
 			StartPosition = transform.position;
-			EndPosition = syncPosition ;
+			EndPosition = syncPosition;
 			EndPosition = syncPosition + syncVelocity * syncDelay;
 		}
 	}
